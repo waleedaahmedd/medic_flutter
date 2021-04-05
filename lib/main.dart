@@ -1,16 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:medic_flutter_app/Register/RegisterPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'ApiClients/UserApiClient.dart';
 import 'Login/LoginPage.dart';
 import 'package:flutter/services.dart';
 
-void main() {
-  //setup();
+import 'Login_Api/LoginUserRequest.dart';
+import 'Login_Api/LoginUserResponse.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:get_it/get_it.dart';
+import 'package:medic_flutter_app/ApiClients/UserApiClient.dart';
+import 'package:medic_flutter_app/Login/LoginPage.dart';
+import 'package:medic_flutter_app/Login_Api/LoginUserRequest.dart';
+import 'package:medic_flutter_app/Login_Api/LoginUserResponse.dart';
+import 'package:medic_flutter_app/Register/RegisterPage.dart';
+import 'package:medic_flutter_app/RestClient.dart';
+
+import 'package:page_transition/page_transition.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var username = prefs.getString('username');
+  var password = prefs.getString('password');
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(MyApp());
+
+  autoLogin(username,password);
+  //runApp(MaterialApp(home: username == null ? LoginPage() : RegisterPage()));
+
 }
 
-class MyApp extends StatelessWidget {
+void autoLogin(String username,password) {
+if (username == null) {
+  runApp(LoginApp());
+}
+  runApi();
+}
+
+void runApi() {
+
+  FutureBuilder<LoginUserResponse> _buildBody(
+      BuildContext context, LoginUserRequest request) {
+    final client =
+    UserApiClient(Dio(BaseOptions(contentType: "application/json")));
+    return FutureBuilder<LoginUserResponse>(
+      future: client.loginUser(request),
+      // ignore: missing_return
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final LoginUserResponse posts = snapshot.data;
+          SchedulerBinding.instance.addPostFrameCallback((_) async {
+            if (posts.responseCode == '00') {
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              pref.setString('username' , emailController.text);
+              pref.setString('password', passwordController.text);
+              /*   SingletonClass jwtToken = new SingletonClass();
+              jwtToken.setJwtToken(posts.jwtToken);*/
+              _restClient.jwtToken = posts.jwtToken;
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: RegisterPage(),
+                      type: PageTransitionType.bottomToTop,
+                      duration: Duration(milliseconds: 500)));
+              Fluttertoast.showToast(
+                  msg: posts.responseMessage,
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            } else {
+              Fluttertoast.showToast(
+                  msg: posts.responseMessage,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
+          });
+          return Container();
+          // return _buildPosts(context, posts);
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+
+}
+
+class LoginApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -20,6 +112,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
 
 /*import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -122,5 +216,3 @@ Widget _buildPosts(BuildContext context, LoginUserResponse posts) {
     ),
   );*/
 //}
-
-

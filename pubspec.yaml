@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   page_transition: ^1.1.7+6
   fluttertoast: ^7.1.6
+  shared_preferences:
 
 
 dev_dependencies:

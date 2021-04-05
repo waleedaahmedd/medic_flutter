@@ -31,7 +31,7 @@ class RegisterHeader extends StatelessWidget {
           ),
           Center(
             child: Text(
-              _restClient.jwtToken,
+              '_restClient.jwtToken',
               style: TextStyle(color: Colors.white, fontSize: 40),
             ),
           ),

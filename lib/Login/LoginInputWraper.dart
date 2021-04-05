@@ -13,6 +13,7 @@ import 'package:medic_flutter_app/RestClient.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginInputWraper extends StatefulWidget {
   @override
@@ -90,14 +91,14 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
 
             ConstrainedBox(
               constraints:
-              BoxConstraints(minWidth: double.infinity, minHeight: 50),
+                  BoxConstraints(minWidth: double.infinity, minHeight: 50),
               child: ElevatedButton(
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     //    side: BorderSide(color: Colors.red),
-                      )),
+                  )),
                   backgroundColor: MaterialStateProperty.all(Colors.red),
                   padding: MaterialStateProperty.all(
                       EdgeInsets.symmetric(horizontal: 50.0)),
@@ -118,7 +119,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                 ),
-               // textColor: Colors.white,
+                // textColor: Colors.white,
               ),
             ),
             SizedBox(
@@ -182,10 +183,11 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           final LoginUserResponse posts = snapshot.data;
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            // add your code here.
-
+          SchedulerBinding.instance.addPostFrameCallback((_) async {
             if (posts.responseCode == '00') {
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              pref.setString('username' , emailController.text);
+              pref.setString('password', passwordController.text);
               /*   SingletonClass jwtToken = new SingletonClass();
               jwtToken.setJwtToken(posts.jwtToken);*/
               _restClient.jwtToken = posts.jwtToken;
