@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:medic_flutter_app/Register/RegisterPage.dart';
+import 'package:medic_flutter_app/sample.dart';
+import 'package:medic_flutter_app/sample2.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'ApiClients/UserApiClient.dart';
 import 'Login/LoginPage.dart';
@@ -32,24 +35,25 @@ Future<void> main() async {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  autoLogin(username,password);
+  autoLogin(username, password);
   //runApp(MaterialApp(home: username == null ? LoginPage() : RegisterPage()));
-
 }
 
-void autoLogin(String username,password) {
-if (username == null) {
-  runApp(LoginApp());
-}
-  runApi();
+void autoLogin(String username, password) {
+  if (username == null) {
+    runApp(LoginApp());
+  }
+  runApp(showHomeScreen());
+ // runApi(username, password);
 }
 
-void runApi() {
+void runApi(String username, password) {
+  RestClient _restClient = new RestClient();
 
   FutureBuilder<LoginUserResponse> _buildBody(
       BuildContext context, LoginUserRequest request) {
     final client =
-    UserApiClient(Dio(BaseOptions(contentType: "application/json")));
+        UserApiClient(Dio(BaseOptions(contentType: "application/json")));
     return FutureBuilder<LoginUserResponse>(
       future: client.loginUser(request),
       // ignore: missing_return
@@ -59,8 +63,8 @@ void runApi() {
           SchedulerBinding.instance.addPostFrameCallback((_) async {
             if (posts.responseCode == '00') {
               SharedPreferences pref = await SharedPreferences.getInstance();
-              pref.setString('username' , emailController.text);
-              pref.setString('password', passwordController.text);
+              pref.setString('username', username);
+              pref.setString('password', password);
               /*   SingletonClass jwtToken = new SingletonClass();
               jwtToken.setJwtToken(posts.jwtToken);*/
               _restClient.jwtToken = posts.jwtToken;
@@ -99,8 +103,34 @@ void runApi() {
       },
     );
   }
-
 }
+
+/*class showHomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Modal Progress HUD Demo'),
+        backgroundColor: Colors.blue,
+      ),
+      // display modal progress HUD (heads-up display, or indicator)
+      // when in async call
+      body: ModalProgressHUD(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: LoginApp(),
+          ),
+        ),
+       // inAsyncCall: _isInAsyncCall,
+        // demo of some additional parameters
+        opacity: 0.5,
+        progressIndicator: CircularProgressIndicator(),
+      ),
+    );
+  }
+}*/
+
 
 class LoginApp extends StatelessWidget {
   @override
@@ -113,7 +143,16 @@ class LoginApp extends StatelessWidget {
   }
 }
 
-
+class showHomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return new MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: sample2(),
+    );
+  }
+}
 
 /*import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

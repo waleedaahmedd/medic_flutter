@@ -38,6 +38,7 @@ dependencies:
   page_transition: ^1.1.7+6
   fluttertoast: ^7.1.6
   shared_preferences:
+  modal_progress_hud: ^0.1.3
 
 
 dev_dependencies:

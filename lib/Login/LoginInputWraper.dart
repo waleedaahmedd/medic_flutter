@@ -9,6 +9,7 @@ import 'package:medic_flutter_app/Login_Api/LoginUserRequest.dart';
 import 'package:medic_flutter_app/Login_Api/LoginUserResponse.dart';
 import 'package:medic_flutter_app/Register/RegisterPage.dart';
 import 'package:medic_flutter_app/RestClient.dart';
+import 'package:medic_flutter_app/sample2.dart';
 
 import 'package:page_transition/page_transition.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -186,7 +187,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
           SchedulerBinding.instance.addPostFrameCallback((_) async {
             if (posts.responseCode == '00') {
               SharedPreferences pref = await SharedPreferences.getInstance();
-              pref.setString('username' , emailController.text);
+              pref.setString('username', emailController.text);
               pref.setString('password', passwordController.text);
               /*   SingletonClass jwtToken = new SingletonClass();
               jwtToken.setJwtToken(posts.jwtToken);*/
@@ -220,7 +221,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
           // return _buildPosts(context, posts);
         } else {
           return Center(
-            child: CircularProgressIndicator(),
+            child: LinearProgressIndicator(),
           );
         }
       },

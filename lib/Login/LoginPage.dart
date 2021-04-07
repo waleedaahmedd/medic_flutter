@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../sample2.dart';
 import 'LoginHeader.dart';
 import 'LoginInputWraper.dart';
 
@@ -9,6 +10,7 @@ class LoginPage extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       resizeToAvoidBottomInset: false,
+
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
