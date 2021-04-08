@@ -9,16 +9,16 @@ import 'ApiClients/UserApiClient.dart';
 import 'Login/LoginPage.dart';
 import 'package:flutter/services.dart';
 
-import 'Login_Api/LoginUserRequest.dart';
-import 'Login_Api/LoginUserResponse.dart';
+import 'Requests/LoginUserRequest.dart';
+import 'Responses/LoginUserResponse.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:medic_flutter_app/ApiClients/UserApiClient.dart';
 import 'package:medic_flutter_app/Login/LoginPage.dart';
-import 'package:medic_flutter_app/Login_Api/LoginUserRequest.dart';
-import 'package:medic_flutter_app/Login_Api/LoginUserResponse.dart';
+import 'file:///E:/medic_flutter_git/lib/Requests/LoginUserRequest.dart';
+import 'file:///E:/medic_flutter_git/lib/Responses/LoginUserResponse.dart';
 import 'package:medic_flutter_app/Register/RegisterPage.dart';
 import 'package:medic_flutter_app/RestClient.dart';
 
@@ -47,7 +47,7 @@ void autoLogin(String username, password) {
  // runApi(username, password);
 }
 
-void runApi(String username, password) {
+/*void runApi(String username, password) {
   RestClient _restClient = new RestClient();
 
   FutureBuilder<LoginUserResponse> _buildBody(
@@ -65,8 +65,8 @@ void runApi(String username, password) {
               SharedPreferences pref = await SharedPreferences.getInstance();
               pref.setString('username', username);
               pref.setString('password', password);
-              /*   SingletonClass jwtToken = new SingletonClass();
-              jwtToken.setJwtToken(posts.jwtToken);*/
+              *//*   SingletonClass jwtToken = new SingletonClass();
+              jwtToken.setJwtToken(posts.jwtToken);*//*
               _restClient.jwtToken = posts.jwtToken;
               Navigator.push(
                   context,
@@ -103,7 +103,7 @@ void runApi(String username, password) {
       },
     );
   }
-}
+}*/
 
 /*class showHomeScreen extends StatelessWidget {
   @override

@@ -5,7 +5,7 @@ class RestClient {
   String get jwtToken => _jwtToken;
 
   set jwtToken(String value) {
-    _jwtToken = value;
+    _jwtToken = "Bearer "+ value;
   }
 
   factory RestClient() {
