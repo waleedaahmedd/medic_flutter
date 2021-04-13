@@ -1,19 +1,15 @@
-import 'dart:ffi';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:get_it/get_it.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medic_flutter_app/ApiClients/UserApiClient.dart';
-import 'package:medic_flutter_app/Login/LoginPage.dart';
-import 'file:///E:/medic_flutter_git/lib/Requests/LoginUserRequest.dart';
-import 'file:///E:/medic_flutter_git/lib/Responses/LoginUserResponse.dart';
+
 import 'package:medic_flutter_app/Register/RegisterPage.dart';
+import 'package:medic_flutter_app/Requests/LoginUserRequest.dart';
+import 'package:medic_flutter_app/Responses/LoginUserResponse.dart';
 import 'package:medic_flutter_app/RestClient.dart';
-import 'package:medic_flutter_app/sample2.dart';
 
 import 'package:page_transition/page_transition.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginInputWraper extends StatefulWidget {
@@ -189,8 +185,8 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
               SharedPreferences pref = await SharedPreferences.getInstance();
               pref.setString('username', emailController.text);
               pref.setString('password', passwordController.text);
-              /*   SingletonClass jwtToken = new SingletonClass();
-              jwtToken.setJwtToken(posts.jwtToken);*/
+              // SingletonClass jwtToken = new SingletonClass();
+              //  jwtToken.setJwtToken(posts.jwtToken);
               _restClient.jwtToken = posts.jwtToken;
               Navigator.push(
                   context,
@@ -228,23 +224,23 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
     );
   }
 
-  Widget _buildPosts(BuildContext context, LoginUserResponse posts) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            "responseMessage : " + posts.responseMessage,
-            style: TextStyle(fontSize: 20),
-          ),
-          Text(
-            "jwtToken : " + posts.jwtToken.toString(),
-            style: TextStyle(fontSize: 20),
-          ),
-        ],
-      ),
-    );
-    /* if (posts.responseCode == '00') {
+/*Widget _buildPosts(BuildContext context, LoginUserResponse posts) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          "responseMessage : " + posts.responseMessage,
+          style: TextStyle(fontSize: 20),
+        ),
+        Text(
+          "jwtToken : " + posts.jwtToken.toString(),
+          style: TextStyle(fontSize: 20),
+        ),
+      ],
+    ),
+  );
+  */ /* if (posts.responseCode == '00') {
       Fluttertoast.showToast(
           msg: posts.responseMessage,
           toastLength: Toast.LENGTH_SHORT,
@@ -270,6 +266,6 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }*/
-  }
+    }*/ /*
+}*/
 }

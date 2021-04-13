@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../sample2.dart';
 import 'LoginHeader.dart';
 import 'LoginInputWraper.dart';
 

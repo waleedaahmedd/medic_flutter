@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medic_flutter_app/Login/LoginPage.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'RegisterInputField.dart';

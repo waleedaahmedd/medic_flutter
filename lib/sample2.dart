@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medic_flutter_app/Login/LoginPage.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+
+import 'Ui/Login/LoginPage.dart';
 
 
 class sample2 extends StatelessWidget {
