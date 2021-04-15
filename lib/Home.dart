@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:medic_flutter_app/Widgets/myDrawer.dart';
 
 class CustomBarWidget extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
@@ -8,6 +9,7 @@ class CustomBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      drawer: MyDrawer(),
       body: Container(
         height: 160.0,
         child: Stack(
@@ -43,7 +45,7 @@ class CustomBarWidget extends StatelessWidget {
                           color: Colors.red,
                         ),
                         onPressed: () {
-                          print("your menu action here");
+                         // print("your menu action here");
                           _scaffoldKey.currentState.openDrawer();
                         },
                       ),
