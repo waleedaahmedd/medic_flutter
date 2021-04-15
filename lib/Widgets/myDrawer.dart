@@ -4,16 +4,20 @@ import 'package:flutter/material.dart';
 class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DrawerHeader(
-            child: Text("Header"),
+          ListTile(
+            title: Text('Title'),
           ),
           ListTile(
-            title: Text("Home"),
-          )
+            title: Text('Title'),
+          ),
+          ListTile(
+            title: Text('Title'),
+          ),
         ],
       ),
     );
