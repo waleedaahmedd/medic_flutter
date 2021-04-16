@@ -26,7 +26,7 @@ class _Home2State extends State<Home2> {
         //hasClone: true,
         bodyBackgroundPeekSize: 40,
         bodySize: 100,
-        backgroundColor: Colors.orange[600],
+        backgroundColor: Colors.red[600],
         // pass drawer widget
         drawer: buildDrawer(),
         // pass body widget
@@ -43,13 +43,13 @@ class _Home2State extends State<Home2> {
           child: Stack(
             children: <Widget>[
               Container(
-                color: Colors.red,
+                color: Colors.white,
                 width: MediaQuery.of(context).size.width,
                 height: 100.0,
                 child: Center(
                   child: Text(
                     "Medic",
-                    style: TextStyle(color: Colors.white, fontSize: 18.0),
+                    style: TextStyle(color: Colors.red, fontSize: 18.0),
                   ),
                 ),
               ),
@@ -130,7 +130,7 @@ class _Home2State extends State<Home2> {
         // build your screen body
         Expanded(
           child: Container(
-            color: Colors.white,
+            color: Colors.black12,
             child: Center(
               child: Text('Home Screen'),
             ),
@@ -146,6 +146,18 @@ class _Home2State extends State<Home2> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            margin: EdgeInsets.all(20),
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                  image: NetworkImage('https://googleflutter.com/sample_image.jpg'),
+                  fit: BoxFit.fill
+              ),
+            ),
+          ),
           ListTile(
             title: Text('Title'),
           ),
