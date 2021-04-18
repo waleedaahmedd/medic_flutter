@@ -12,6 +12,8 @@ import 'package:medic_flutter_app/RestClient.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../HomeScreen.dart';
+
 class LoginInputWraper extends StatefulWidget {
   @override
   _LoginInputWraperState createState() => _LoginInputWraperState();
@@ -191,7 +193,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
               Navigator.push(
                   context,
                   PageTransition(
-                      child: RegisterPage(),
+                      child: HomeScreen(),
                       type: PageTransitionType.bottomToTop,
                       duration: Duration(milliseconds: 500)));
               Fluttertoast.showToast(

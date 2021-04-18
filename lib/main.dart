@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medic_flutter_app/Home.dart';
-import 'package:medic_flutter_app/home%202.dart';
-import 'package:medic_flutter_app/sample2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-
+import 'Ui/HomeScreen.dart';
 import 'Ui/Login/LoginPage.dart';
 
 Future<void> main() async {
@@ -21,10 +18,10 @@ Future<void> main() async {
 }
 
 void autoLogin(String username, password) {
-  if (username == null) {
+ // if (username == null) {
     runApp(LoginApp());
-  }
-  runApp(showHomeScreen());
+ // }
+ // runApp(showHomeScreen());
   // runApi(username, password);
 }
 
@@ -45,7 +42,7 @@ class showHomeScreen extends StatelessWidget {
     // TODO: implement build
     return new MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home2(),
+      home: HomeScreen(),
     );
   }
 }

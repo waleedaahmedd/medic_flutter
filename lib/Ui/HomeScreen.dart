@@ -2,16 +2,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'Home.dart';
-import 'SwipeDrwer.dart';
-import 'Widgets/myDrawer.dart';
+import 'CategoriesScreen.dart';
+import '../Home.dart';
+import '../SwipeDrwer.dart';
+import '../Widgets/myDrawer.dart';
 
-class Home2 extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  _Home2State createState() => _Home2State();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _Home2State extends State<Home2> {
+class _HomeScreenState extends State<HomeScreen> {
   var drawerKey = GlobalKey<SwipeDrawerState>();
 
   @override
@@ -129,12 +130,13 @@ class _Home2State extends State<Home2> {
         ),*/
         // build your screen body
         Expanded(
-          child: Container(
+          child: CategoriesScreen(),
+          /*child: Container(
             color: Colors.black12,
             child: Center(
               child: Text('Home Screen'),
             ),
-          ),
+          ),*/
         ),
       ],
     );
@@ -153,12 +155,28 @@ class _Home2State extends State<Home2> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                  image: NetworkImage('https://googleflutter.com/sample_image.jpg'),
-                  fit: BoxFit.fill
-              ),
+                  image: NetworkImage(
+                      'https://googleflutter.com/sample_image.jpg'),
+                  fit: BoxFit.fill),
             ),
           ),
-          ListTile(
+          _createDrawerItem(
+            icon: Icons.contacts,
+            text: 'Contacts',
+          ),
+          _createDrawerItem(
+            icon: Icons.contacts,
+            text: 'Contacts',
+          ),
+          _createDrawerItem(
+            icon: Icons.contacts,
+            text: 'Contacts',
+          ),
+          _createDrawerItem(
+            icon: Icons.contacts,
+            text: 'Contacts',
+          ),
+          /*ListTile(
             title: Text('Title'),
           ),
           ListTile(
@@ -166,9 +184,34 @@ class _Home2State extends State<Home2> {
           ),
           ListTile(
             title: Text('Title'),
-          ),
+          ),*/
         ],
       ),
+    );
+  }
+
+  Widget _createDrawerItem(
+      {IconData icon, String text, GestureTapCallback onTap}) {
+    return ListTile(
+      title: Row(
+        children: <Widget>[
+          Icon(
+            icon,
+            color: Colors.white,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text(
+              text,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
+      ),
+      onTap: onTap,
     );
   }
 }
