@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class CategoryDTO {
   String categoryName;
   String categoryIcon;
@@ -17,5 +19,13 @@ class CategoryDTO {
     data['categoryIcon'] = this.categoryIcon;
     data['id'] = this.id;
     return data;
+  }
+  getImage(){
+
+    String newDecodedImageUri =  utf8.decode(base64.decode(this.categoryIcon)).replaceAll("data:image/png;base64,", "");
+
+    return  base64.decode(newDecodedImageUri);
+
+
   }
 }
