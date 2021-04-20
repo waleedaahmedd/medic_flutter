@@ -30,6 +30,11 @@ class LoginApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return new MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.red,
+        accentColor: Colors.red,
+        textTheme: TextTheme(bodyText2: TextStyle(color: Theme.of(context).primaryColor)),
+      ),
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
     );

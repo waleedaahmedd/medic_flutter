@@ -44,13 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Stack(
             children: <Widget>[
               Container(
-                color: Colors.white,
+                color: Theme.of(context).primaryColor,
                 width: MediaQuery.of(context).size.width,
                 height: 100.0,
                 child: Center(
                   child: Text(
                     "Medic",
-                    style: TextStyle(color: Colors.red, fontSize: 18.0),
+                    style: TextStyle(color: Colors.white, fontSize: 20.0,fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         IconButton(
                           icon: Icon(
                             Icons.menu,
-                            color: Colors.red,
+                            color: Theme.of(context).primaryColor,
                           ),
                           onPressed: () {
                             if (drawerKey.currentState.isOpened()) {

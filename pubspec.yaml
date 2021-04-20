@@ -39,6 +39,7 @@ dependencies:
   fluttertoast: ^7.1.6
   shared_preferences:
   modal_progress_hud: ^0.1.3
+  progress_dialog: any
 
 
 dev_dependencies:
