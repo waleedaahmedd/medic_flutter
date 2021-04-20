@@ -10,6 +10,7 @@ import 'package:medic_flutter_app/Responses/LoginUserResponse.dart';
 import 'package:medic_flutter_app/RestClient.dart';
 
 import 'package:page_transition/page_transition.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../HomeScreen.dart';
@@ -20,6 +21,7 @@ class LoginInputWraper extends StatefulWidget {
 }
 
 class _LoginInputWraperState extends State<LoginInputWraper> {
+  ProgressDialog progressDialog;
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
   bool pressed = false;
@@ -29,6 +31,8 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
 
   @override
   Widget build(BuildContext context) {
+    progressDialog = ProgressDialog(context, type: ProgressDialogType.Normal);
+    progressDialog.update(message: 'asasasasaas');
     // TODO: implement build
     return SingleChildScrollView(
       child: Padding(
@@ -139,12 +143,13 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                       EdgeInsets.symmetric(horizontal: 50.0)),
                 ),
                 onPressed: () async {
-                  Navigator.push(
+                  progressDialog.show();
+                 /* Navigator.push(
                       context,
                       PageTransition(
                           child: RegisterPage(),
                           type: PageTransitionType.bottomToTop,
-                          duration: Duration(milliseconds: 500)));
+                          duration: Duration(milliseconds: 500)));*/
                 },
                 child: Text(
                   "Register",
@@ -165,7 +170,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
             child:
                 Text("Buy now".toUpperCase(), style: TextStyle(fontSize: 14)),
           ),*/
-            pressed ? _buildBody(context, request) : SizedBox(),
+            pressed ? _buildBody(context, request,progressDialog) : SizedBox(),
           ],
         ),
       ),
@@ -173,7 +178,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
   }
 
   FutureBuilder<LoginUserResponse> _buildBody(
-      BuildContext context, LoginUserRequest request) {
+      BuildContext context, LoginUserRequest request, ProgressDialog progressDialog) {
     final client =
         UserApiClient(Dio(BaseOptions(contentType: "application/json")));
     return FutureBuilder<LoginUserResponse>(
