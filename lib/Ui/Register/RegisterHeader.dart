@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../RestClient.dart';
+
+import '../../Singleton/RestClient.dart';
 
 class RegisterHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    RestClient _restClient = new RestClient();
+  //  RestClient _restClient = new RestClient();
 
     // SingletonClass jwtToken = SingletonClass();
     // TODO: implement build
@@ -31,7 +32,7 @@ class RegisterHeader extends StatelessWidget {
           ),
           Center(
             child: Text(
-              '_restClient.jwtToken',
+              'Register',
               style: TextStyle(color: Colors.white, fontSize: 40),
             ),
           ),
@@ -40,7 +41,7 @@ class RegisterHeader extends StatelessWidget {
           ),
           Center(
             child: Text(
-              'Welcome to inside Android',
+              'Welcome to Medic',
               style: TextStyle(color: Colors.white, fontSize: 18),
             ),
           ),

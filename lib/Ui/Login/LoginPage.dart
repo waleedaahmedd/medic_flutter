@@ -9,16 +9,11 @@ class LoginPage extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       resizeToAvoidBottomInset: false,
-
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-            Colors.red[500],
-            Colors.black87,
-            Colors.black,
-          ]),
-        ),
+            image: DecorationImage(
+                image: AssetImage("assets/splash.png"), fit: BoxFit.cover)),
         child: Column(
           children: <Widget>[
             SizedBox(

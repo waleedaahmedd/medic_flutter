@@ -21,7 +21,7 @@ class LoginHeader extends StatelessWidget {
           ),
           Center(
             child: Text(
-              'Welcome to inside Android',
+              'Welcome to Medic',
               style: TextStyle(color: Colors.white, fontSize: 18),
             ),
           ),

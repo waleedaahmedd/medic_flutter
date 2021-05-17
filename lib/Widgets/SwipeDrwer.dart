@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class SwipeDrawer extends StatefulWidget {
   // Drawer background color
@@ -20,16 +21,16 @@ class SwipeDrawer extends StatefulWidget {
   // animation curve
   final Curve curve;
 
-  SwipeDrawer(
-      {@required this.child,
-        @required this.drawer,
-        @required Key key,
-        this.bodySize = 80,
-        this.radius = 0,
-        this.bodyBackgroundPeekSize = 50,
-        this.curve = Curves.easeIn,
-        this.backgroundColor = Colors.black})
-      : super(key: key);
+  SwipeDrawer({
+    @required this.child,
+    @required this.drawer,
+    @required Key key,
+    this.bodySize = 80,
+    this.radius = 0,
+    this.bodyBackgroundPeekSize = 50,
+    this.curve = Curves.easeIn,
+    this.backgroundColor = Colors.black,
+  }) : super(key: key);
 
   @override
   SwipeDrawerState createState() => SwipeDrawerState();
@@ -93,7 +94,7 @@ class SwipeDrawerState extends State<SwipeDrawer>
                       scale, size, widget.bodySize, reverse)),
               Transform.translate(
                 offset:
-                Offset(-size.width * (1 - animation.value) * reverse, 0),
+                    Offset(-size.width * (1 - animation.value) * reverse, 0),
                 child: buildDrawer(size),
               ),
             ],

@@ -11,12 +11,8 @@ class RegisterPage extends StatelessWidget {
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-            Colors.red[500],
-            Colors.red[300],
-            Colors.red[400],
-          ]),
-        ),
+            image: DecorationImage(
+                image: AssetImage("assets/splash.png"), fit: BoxFit.cover)),
         child: Column(
           children: <Widget>[
             SizedBox(

@@ -1,21 +1,16 @@
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medic_flutter_app/ApiClients/CategoriesApiClient.dart';
 import 'package:medic_flutter_app/Responses/CategoryDTO.dart';
 import 'package:medic_flutter_app/Responses/CategoryListResponse.dart';
-import 'package:flutter/material.dart';
 
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
-import '../RestClient.dart';
+import '../Singleton/RestClient.dart';
 
 class CategoriesScreen extends StatefulWidget {
   @override
@@ -45,41 +40,21 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           if (posts.responseCode == '00') {
             List<CategoryDTO> post = posts.categories;
             return _buildPosts(context, post);
-            /* SharedPreferences pref = await SharedPreferences.getInstance();
-              pref.setString('username', emailController.text);
-              pref.setString('password', passwordController.text);*/
-            // SingletonClass jwtToken = new SingletonClass();
-            //  jwtToken.setJwtToken(posts.jwtToken);
-            /*_restClient.jwtToken = posts.jwtToken;*/
-            /*  Navigator.push(
-                  context,
-                  PageTransition(
-                      child: RegisterPage(),
-                      type: PageTransitionType.bottomToTop,
-                      duration: Duration(milliseconds: 500)));*/
-            Fluttertoast.showToast(
-                msg: posts.responseMessage,
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
           } else {
             Fluttertoast.showToast(
                 msg: posts.responseMessage,
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(context).primaryColor,
                 textColor: Colors.white,
                 fontSize: 16.0);
           }
-          //  return Container();
-          // return _buildPosts(context, posts);
         } else {
           return Center(
-            child: CircularProgressIndicator(backgroundColor: Colors.white,),
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.white,
+            ),
           );
         }
       },
@@ -99,9 +74,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           child: Card(
             elevation: 4,
             margin: const EdgeInsets.all(10.0),
-            child:Padding(
+            child: Padding(
               padding: EdgeInsets.all(8),
-
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -122,15 +96,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   Flexible(
                     child: Text(
                       posts[index].categoryName,
-                      style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0,color: Colors.black),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.0,
+                          color: Colors.black),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ],
               ),
             ),
-
           ),
           onTap: () {
             Fluttertoast.showToast(msg: 'asdsdsd');
@@ -161,5 +136,3 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
   }*/
 }
-
-

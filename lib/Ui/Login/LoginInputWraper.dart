@@ -1,13 +1,22 @@
+import 'dart:async';
+
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medic_flutter_app/ApiClients/UserApiClient.dart';
 
-import 'package:medic_flutter_app/Register/RegisterPage.dart';
 import 'package:medic_flutter_app/Requests/LoginUserRequest.dart';
+import 'package:medic_flutter_app/Ui/Register/RegisterPage.dart';
+
 import 'package:medic_flutter_app/Responses/LoginUserResponse.dart';
-import 'package:medic_flutter_app/RestClient.dart';
+import 'package:medic_flutter_app/Singleton/RestClient.dart';
+import 'package:medic_flutter_app/Widgets/buttonWithBorder.dart';
+import 'package:medic_flutter_app/Widgets/buttonWithoutBorder.dart';
+import 'package:medic_flutter_app/Widgets/progressDialog.dart';
 
 import 'package:page_transition/page_transition.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -21,17 +30,43 @@ class LoginInputWraper extends StatefulWidget {
 }
 
 class _LoginInputWraperState extends State<LoginInputWraper> {
+  Timer _timer;
   ProgressDialog progressDialog;
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
+
+  // EasyLoading easyLoading;
+  final TextEditingController phoneController = new TextEditingController();
+
   bool pressed = false;
+  bool _obscureText = true;
   final LoginUserRequest request = new LoginUserRequest();
+  final _passwordFormKey = GlobalKey<FormState>();
+  final _phoneFormKey = GlobalKey<FormState>();
+
+  String _password;
+  String _phone;
+  String _countryCode;
 
   RestClient _restClient = new RestClient();
+
+/*
+  @override
+  void initState() {
+    super.initState();
+    EasyLoading.addStatusCallback((status) {
+      print('EasyLoading Status $status');
+      if (status == EasyLoadingStatus.dismiss) {
+        _timer?.cancel();
+      }
+    });
+    EasyLoading.showSuccess('Use in initState');
+    // EasyLoading.removeCallbacks();
+  }
+*/
 
   @override
   Widget build(BuildContext context) {
     progressDialog = ProgressDialog(context, type: ProgressDialogType.Normal);
+    // easyLoading = EasyLoading();
     progressDialog.update(message: 'asasasasaas');
     // TODO: implement build
     return SingleChildScrollView(
@@ -47,41 +82,100 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: Column(
                 children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(color: Colors.grey[200]))),
-                    child: TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                          hintText: 'Enter your Email',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          border: InputBorder.none),
-                    ),
+                  Row(
+                    children: <Widget>[
+                      new SizedBox(
+                        width: 100,
+                        child: CountryCodePicker(
+                          initialSelection: 'PK',
+                          textStyle:
+                              TextStyle(fontSize: 15.0, color: Colors.black87),
+                          showCountryOnly: false,
+                          showDropDownButton: false,
+                          showOnlyCountryWhenClosed: false,
+                          favorite: ['+92', 'PK'],
+                          alignLeft: false,
+                          showFlag: true,
+                          flagWidth: 30.0,
+                          onInit: (CountryCode code) {
+                            _countryCode = (code.dialCode);
+                          },
+                          onChanged: (CountryCode code) {
+                            _countryCode = (code.dialCode);
+                          },
+                        ),
+                      ),
+                      new Expanded(
+                        //  flex:6,
+                        child: Form(
+                          key: _phoneFormKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                style: TextStyle(fontSize: 18),
+                                // obscureText: _obscureText,
+                                //controller: passwordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Enter your Phone',
+                                ),
+                                validator: _validatePhone,
+                                onSaved: (value) => _phone = value,
+                              ),
+                              Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 20.0))
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(color: Colors.grey[200]))),
-                    child: TextField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                          hintText: 'Enter your Password',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          border: InputBorder.none),
+                  Form(
+                    key: _passwordFormKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextFormField(
+                          style: TextStyle(fontSize: 18),
+                          obscureText: _obscureText,
+                          //controller: passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Enter your Password',
+                            suffixIcon: InkWell(
+                              onTap: _toggle,
+                              child: Icon(
+                                _obscureText
+                                    ? Icons.remove_red_eye_sharp
+                                    : Icons.remove_red_eye,
+                                color: Colors.grey,
+                                size: 20.0,
+                              ),
+                            ),
+                          ),
+                          validator: _validatePassword,
+                          onSaved: (value) => _password = value,
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0))
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 40,
-            ),
-            Text(
-              "Forgot Password",
-              style: TextStyle(color: Colors.grey),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "Forgot Password",
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: 20,
@@ -89,40 +183,29 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
             SizedBox(
               height: 20,
             ),
-
-            //  Button(),
-
             ConstrainedBox(
               constraints:
                   BoxConstraints(minWidth: double.infinity, minHeight: 50),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    //    side: BorderSide(color: Colors.red),
-                  )),
-                  backgroundColor: MaterialStateProperty.all(Colors.red),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(horizontal: 50.0)),
-                ),
+              child: ButtonWithoutBorder(
+                text: 'Login',
                 onPressed: () => {
-                  setState(() {
-                    pressed = true;
-                    request.userName = emailController.text;
-                    request.password = passwordController.text;
-                    //fetchData(postNum);
-                  })
+                  setState(
+                    () {
+                      SystemChannels.textInput.invokeMethod('TextInput.hide');
+                      if (_phoneFormKey.currentState.validate() &&
+                          _passwordFormKey.currentState.validate()) {
+                        _phoneFormKey.currentState.save();
+                        _passwordFormKey.currentState.save();
+                        pressed = true;
+                        _countryCode = (_countryCode.substring(1));
+                        request.userName = _countryCode + _phone;
+                        request.password = _password;
+                        _timer?.cancel();
+                        EasyLoading.show(status: 'Please Wait...');
+                      }
+                    },
+                  )
                 },
-                //color: Colors.red,
-                child: Text(
-                  "Login",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold),
-                ),
-                // textColor: Colors.white,
               ),
             ),
             SizedBox(
@@ -131,46 +214,21 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
             ConstrainedBox(
               constraints:
                   BoxConstraints(minWidth: double.infinity, minHeight: 50),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: BorderSide(color: Colors.red),
-                  )),
-                  backgroundColor: MaterialStateProperty.all(Colors.white),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(horizontal: 50.0)),
-                ),
-                onPressed: () async {
-                  progressDialog.show();
-                 /* Navigator.push(
-                      context,
-                      PageTransition(
-                          child: RegisterPage(),
-                          type: PageTransitionType.bottomToTop,
-                          duration: Duration(milliseconds: 500)));*/
-                },
-                child: Text(
-                  "Register",
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
+              child: ButtonWithBorder(
+                  text: 'Register',
+                  onPressed: () {
+                    _timer?.cancel();
+                    EasyLoading.show(status: 'Please Wait...');
+                    Navigator.push(
+                        this.context,
+                        PageTransition(
+                            child: RegisterPage(),
+                            type: PageTransitionType.bottomToTop,
+                            duration: Duration(milliseconds: 500)));
+                    EasyLoading.dismiss();
+                  }),
             ),
-            /*RaisedButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                side: BorderSide(color: Colors.red)),
-            onPressed: () {},
-            color: Colors.red,
-            textColor: Colors.white,
-            child:
-                Text("Buy now".toUpperCase(), style: TextStyle(fontSize: 14)),
-          ),*/
-            pressed ? _buildBody(context, request,progressDialog) : SizedBox(),
+            pressed ? _buildBody(context, request) : Container(),
           ],
         ),
       ),
@@ -178,22 +236,22 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
   }
 
   FutureBuilder<LoginUserResponse> _buildBody(
-      BuildContext context, LoginUserRequest request, ProgressDialog progressDialog) {
+    BuildContext context,
+    LoginUserRequest request,
+  ) {
     final client =
         UserApiClient(Dio(BaseOptions(contentType: "application/json")));
     return FutureBuilder<LoginUserResponse>(
       future: client.loginUser(request),
-      // ignore: missing_return
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           final LoginUserResponse posts = snapshot.data;
           SchedulerBinding.instance.addPostFrameCallback((_) async {
             if (posts.responseCode == '00') {
+              EasyLoading.showSuccess(posts.responseMessage);
               SharedPreferences pref = await SharedPreferences.getInstance();
-              pref.setString('username', emailController.text);
-              pref.setString('password', passwordController.text);
-              // SingletonClass jwtToken = new SingletonClass();
-              //  jwtToken.setJwtToken(posts.jwtToken);
+              pref.setString('username', request.userName);
+              pref.setString('password', request.password);
               _restClient.jwtToken = posts.jwtToken;
               Navigator.push(
                   context,
@@ -201,78 +259,50 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                       child: HomeScreen(),
                       type: PageTransitionType.bottomToTop,
                       duration: Duration(milliseconds: 500)));
-              Fluttertoast.showToast(
+            /*  Fluttertoast.showToast(
                   msg: posts.responseMessage,
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.BOTTOM,
                   timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.red,
+                  backgroundColor: Theme.of(context).primaryColor,
                   textColor: Colors.white,
-                  fontSize: 16.0);
+                  fontSize: 16.0);*/
             } else {
-              Fluttertoast.showToast(
-                  msg: posts.responseMessage,
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
+              EasyLoading.showError(posts.responseMessage);
             }
           });
-          return Container();
+          return Container(
+              //child: Text('Something Went wrong'),
+              );
           // return _buildPosts(context, posts);
         } else {
-          return Center(
-            child: LinearProgressIndicator(),
-          );
+          return Container(
+              //child: Text('Something Went wrongs'),
+              );
         }
       },
     );
   }
 
-/*Widget _buildPosts(BuildContext context, LoginUserResponse posts) {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          "responseMessage : " + posts.responseMessage,
-          style: TextStyle(fontSize: 20),
-        ),
-        Text(
-          "jwtToken : " + posts.jwtToken.toString(),
-          style: TextStyle(fontSize: 20),
-        ),
-      ],
-    ),
-  );
-  */ /* if (posts.responseCode == '00') {
-      Fluttertoast.showToast(
-          msg: posts.responseMessage,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
-        Navigator.push(
-            context,
-            PageTransition(
-                child: RegisterPage(),
-                type: PageTransitionType.bottomToTop,
-                duration: Duration(milliseconds: 500)));
+  // validate password
+  String _validatePassword(String password) {
+    if (password.length < 6) {
+      return 'Password must be at least 8 characters';
+    }
+    return null;
+  }
 
-    } else {
-      Fluttertoast.showToast(
-          msg: posts.responseMessage,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }*/ /*
-}*/
+  // validate phone
+  String _validatePhone(String phone) {
+    if (phone.length < 8) {
+      return 'Phone Number is not valid';
+    }
+    return null;
+  }
 }

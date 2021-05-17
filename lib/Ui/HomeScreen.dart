@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'CategoriesScreen.dart';
-import '../Home.dart';
-import '../SwipeDrwer.dart';
+import 'Home.dart';
+import '../Widgets/SwipeDrwer.dart';
 import '../Widgets/myDrawer.dart';
 
 class HomeScreen extends StatefulWidget {
