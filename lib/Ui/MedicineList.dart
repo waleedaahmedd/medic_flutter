@@ -1,44 +1,42 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:medic_flutter_app/ApiClients/CategoriesApiClient.dart';
-import 'package:medic_flutter_app/Responses/CategoryDTO.dart';
-import 'package:medic_flutter_app/Responses/CategoryListResponse.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:medic_flutter_app/Ui/MedicineList.dart';
+import 'package:medic_flutter_app/ApiClients/MedicinesApiClient.dart';
+import 'package:medic_flutter_app/Responses/MedicineDTO.dart';
+import 'package:medic_flutter_app/Responses/MedicineListResponse.dart';
+import 'package:medic_flutter_app/Singleton/RestClient.dart';
 
+class MedicineList extends StatefulWidget {
+  const MedicineList({Key key}) : super(key: key);
 
-
-import '../Singleton/RestClient.dart';
-
-class CategoriesScreen extends StatefulWidget {
   @override
-  _CategoriesScreenState createState() => _CategoriesScreenState();
+  _MedicineListState createState() => _MedicineListState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
+class _MedicineListState extends State<MedicineList> {
   RestClient _restClient = new RestClient();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: _buildBody(context, _restClient.jwtToken),
+      child: _buildBody(context, _restClient.jwtToken, 0, 150, "a"),
     );
   }
 
-  FutureBuilder<CategoryListResponse> _buildBody(
-      BuildContext context, RestClient) {
+  FutureBuilder<MedicineListResponse> _buildBody(
+      BuildContext context, RestClient, pageNumber, categoryId, medicineName) {
     final client =
-    CategoriesApiClient(Dio(BaseOptions(contentType: "application/json")));
-    return FutureBuilder<CategoryListResponse>(
-      future: client.getCategoryList(RestClient),
+        MedicinesApiClient(Dio(BaseOptions(contentType: "application/json")));
+    return FutureBuilder<MedicineListResponse>(
+      future: client.getMedicineList(
+          RestClient, pageNumber, categoryId, medicineName),
       // ignore: missing_return
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          final CategoryListResponse posts = snapshot.data;
+          final MedicineListResponse posts = snapshot.data;
           if (posts.responseCode == '00') {
-            List<CategoryDTO> post = posts.categories;
+            List<MedicineDTO> post = posts.medicines;
             return _buildPosts(context, post);
           } else {
             Fluttertoast.showToast(
@@ -61,7 +59,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
   }
 
-  GridView _buildPosts(BuildContext context, List<CategoryDTO> posts) {
+  GridView _buildPosts(BuildContext context, List<MedicineDTO> posts) {
     return GridView.builder(
       itemCount: posts.length,
       padding: EdgeInsets.all(4),
@@ -79,7 +77,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  new Center(
+                  /*new Center(
                     child: Container(
                       child: new Stack(
                         children: <Widget>[
@@ -92,10 +90,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         ],
                       ),
                     ),
-                  ),
+                  ),*/
                   Flexible(
                     child: Text(
-                      posts[index].categoryName,
+                      posts[index].medicineName,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14.0,
@@ -108,36 +106,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
           ),
           onTap: () {
-            Navigator.push(
-                context,
-                PageTransition(
-                    child: MedicineList(),
-                    type: PageTransitionType.bottomToTop,
-                    duration: Duration(milliseconds: 500)));
+            Fluttertoast.showToast(msg: 'asdsdsd');
           },
         );
       },
     );
   }
-
-/*  ListView _buildPosts(BuildContext context, List<CategoryDTO> posts) {
-    return ListView.builder(
-      itemCount: posts.length,
-      padding: EdgeInsets.all(8),
-      itemBuilder: (context, index) {
-        return Card(
-          elevation: 4,
-          child: ListTile(
-            title: Text(
-              posts[index].categoryName,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            leading: Column(
-              children: <Widget>[new Image.memory(posts[index].getImage())],
-            ),
-          ),
-        );
-      },
-    );
-  }*/
 }
