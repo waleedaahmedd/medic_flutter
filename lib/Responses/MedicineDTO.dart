@@ -70,7 +70,7 @@ class MedicineDTO {
 
   getImage(){
 
-    String newDecodedImageUri =  utf8.decode(base64.decode(this.image)).replaceAll("data:image/png;base64,", "");
+    String newDecodedImageUri =  utf8.decode(base64.decode(this.image)).replaceAll("data:image/jpeg;base64,", "");
 
     return  base64.decode(newDecodedImageUri);
 

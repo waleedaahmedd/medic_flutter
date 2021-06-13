@@ -111,7 +111,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             Navigator.push(
                 context,
                 PageTransition(
-                    child: MedicineList(),
+                    child: MedicineList(categoryId:posts[index].id),
                     type: PageTransitionType.bottomToTop,
                     duration: Duration(milliseconds: 500)));
           },

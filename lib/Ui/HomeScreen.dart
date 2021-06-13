@@ -1,6 +1,8 @@
 //import 'package:drawer_swipe/drawer_swipe.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:medic_flutter_app/Singleton/RestClient.dart';
 
 import 'CategoriesScreen.dart';
 import 'Home.dart';
@@ -14,6 +16,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   var drawerKey = GlobalKey<SwipeDrawerState>();
+  RestClient _restClient = new RestClient();
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +101,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             print("your menu action here");
                           },
                         ),
-                        IconButton(
+                        Badge(
+                            position: BadgePosition.topEnd(top: 5, end: 10),
+                            badgeContent: Text(
+                              _restClient.itemCount.toString(),
+                              style: TextStyle(color: Colors.white, fontSize: 10),
+                            ),
+                            child:
+                            IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {}))
+                        /*IconButton(
                           icon: Icon(
                             Icons.shopping_cart_sharp,
                             color: Colors.red,
@@ -105,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             print("your menu action here");
                           },
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

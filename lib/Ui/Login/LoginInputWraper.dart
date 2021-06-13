@@ -253,6 +253,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
               pref.setString('username', request.userName);
               pref.setString('password', request.password);
               _restClient.jwtToken = posts.jwtToken;
+              _restClient.itemCount = posts.cartItems;
               Navigator.push(
                   context,
                   PageTransition(
