@@ -26,22 +26,17 @@ class _MedicineListState extends State<MedicineList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 40,
+    return SafeArea(
+      child: Column(
+        children: <Widget>[
+          HeaderWithCart(),
+          Expanded(
+            child: Container(
+              child: _buildBody(
+                  context, _restClient.jwtToken, 0, widget.categoryId, ""),
             ),
-            HeaderWithCart(),
-            Expanded(
-              child: Container(
-                child: _buildBody(
-                    context, _restClient.jwtToken, 0, widget.categoryId, ""),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -190,11 +185,12 @@ class _MedicineListState extends State<MedicineList> {
           ),
           onTap: () {
             Navigator.push(
-                context,
-                PageTransition(
-                    child: MedicineDetail(medicine: posts[index]),
-                    type: PageTransitionType.bottomToTop,
-                    duration: Duration(milliseconds: 500)));
+                    context,
+                    PageTransition(
+                        child: MedicineDetail(medicine: posts[index]),
+                        type: PageTransitionType.bottomToTop,
+                        duration: Duration(milliseconds: 500)))
+                .then((_) => setState(() {}));
           },
         );
       },

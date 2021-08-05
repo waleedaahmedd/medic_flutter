@@ -1,5 +1,11 @@
-/*
 import 'package:flutter/widgets.dart';
+import 'package:medic_flutter_app/Requests/AddToCartRequest.dart';
+import 'package:medic_flutter_app/Requests/UpdateCartItemRequest.dart';
+import 'package:medic_flutter_app/Responses/AddToCartResponse.dart';
+import 'package:medic_flutter_app/Responses/CartDeleteResponse.dart';
+import 'package:medic_flutter_app/Responses/CartDetailResponse.dart';
+import 'package:medic_flutter_app/Responses/CartItemDeleteResponse.dart';
+import 'package:medic_flutter_app/Responses/UpdateCartItemResponse.dart';
 import 'package:medic_flutter_app/baseUrl.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
@@ -34,4 +40,3 @@ abstract class CartApiClient {
       @Header("Authorization") String authToken,
       @Body() UpdateCartItemRequest request);
 }
-*/

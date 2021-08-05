@@ -32,42 +32,20 @@ class LoginInputWraper extends StatefulWidget {
 class _LoginInputWraperState extends State<LoginInputWraper> {
   Timer _timer;
   ProgressDialog progressDialog;
-
-  // EasyLoading easyLoading;
   final TextEditingController phoneController = new TextEditingController();
-
   bool pressed = false;
   bool _obscureText = true;
   final LoginUserRequest request = new LoginUserRequest();
   final _passwordFormKey = GlobalKey<FormState>();
   final _phoneFormKey = GlobalKey<FormState>();
-
   String _password;
   String _phone;
   String _countryCode;
 
   RestClient _restClient = new RestClient();
 
-/*
-  @override
-  void initState() {
-    super.initState();
-    EasyLoading.addStatusCallback((status) {
-      print('EasyLoading Status $status');
-      if (status == EasyLoadingStatus.dismiss) {
-        _timer?.cancel();
-      }
-    });
-    EasyLoading.showSuccess('Use in initState');
-    // EasyLoading.removeCallbacks();
-  }
-*/
-
   @override
   Widget build(BuildContext context) {
-    progressDialog = ProgressDialog(context, type: ProgressDialogType.Normal);
-    // easyLoading = EasyLoading();
-    progressDialog.update(message: 'asasasasaas');
     // TODO: implement build
     return SingleChildScrollView(
       child: Padding(
@@ -99,9 +77,11 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                           flagWidth: 30.0,
                           onInit: (CountryCode code) {
                             _countryCode = (code.dialCode);
+                            _countryCode = (_countryCode.substring(1));
                           },
                           onChanged: (CountryCode code) {
                             _countryCode = (code.dialCode);
+                            _countryCode = (_countryCode.substring(1));
                           },
                         ),
                       ),
@@ -115,8 +95,6 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                               TextFormField(
                                 keyboardType: TextInputType.number,
                                 style: TextStyle(fontSize: 18),
-                                // obscureText: _obscureText,
-                                //controller: passwordController,
                                 decoration: InputDecoration(
                                   labelText: 'Enter your Phone',
                                 ),
@@ -140,7 +118,6 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                         TextFormField(
                           style: TextStyle(fontSize: 18),
                           obscureText: _obscureText,
-                          //controller: passwordController,
                           decoration: InputDecoration(
                             labelText: 'Enter your Password',
                             suffixIcon: InkWell(
@@ -197,11 +174,9 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                         _phoneFormKey.currentState.save();
                         _passwordFormKey.currentState.save();
                         pressed = true;
-                        _countryCode = (_countryCode.substring(1));
                         request.userName = _countryCode + _phone;
                         request.password = _password;
                         _timer?.cancel();
-                        EasyLoading.show(status: 'Please Wait...');
                       }
                     },
                   )
@@ -248,7 +223,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
           final LoginUserResponse posts = snapshot.data;
           SchedulerBinding.instance.addPostFrameCallback((_) async {
             if (posts.responseCode == '00') {
-              EasyLoading.showSuccess(posts.responseMessage);
+              EasyLoading.dismiss();
               SharedPreferences pref = await SharedPreferences.getInstance();
               pref.setString('username', request.userName);
               pref.setString('password', request.password);
@@ -260,26 +235,17 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                       child: HomeScreen(),
                       type: PageTransitionType.bottomToTop,
                       duration: Duration(milliseconds: 500)));
-            /*  Fluttertoast.showToast(
-                  msg: posts.responseMessage,
-                  toastLength: Toast.LENGTH_LONG,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  fontSize: 16.0);*/
             } else {
+              setState(() {
+                pressed = false;
+              });
               EasyLoading.showError(posts.responseMessage);
             }
           });
-          return Container(
-              //child: Text('Something Went wrong'),
-              );
-          // return _buildPosts(context, posts);
+          return Container();
         } else {
-          return Container(
-              //child: Text('Something Went wrongs'),
-              );
+          EasyLoading.show(status: 'Please Wait...');
+          return Container();
         }
       },
     );

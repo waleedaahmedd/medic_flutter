@@ -1,13 +1,19 @@
 //import 'package:drawer_swipe/drawer_swipe.dart';
+import 'dart:io';
 import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:medic_flutter_app/ApiClients/CategoriesApiClient.dart';
+import 'package:medic_flutter_app/Responses/CategoryDTO.dart';
+import 'package:medic_flutter_app/Responses/CategoryListResponse.dart';
 import 'package:medic_flutter_app/Singleton/RestClient.dart';
-
-import 'CategoriesScreen.dart';
-import 'Home.dart';
+import 'package:medic_flutter_app/Widgets/buildDrawer.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:dio/dio.dart';
 import '../Widgets/SwipeDrwer.dart';
-import '../Widgets/myDrawer.dart';
+import 'package:medic_flutter_app/Widgets/badgeWithCart.dart';
+import 'MedicineList.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,24 +24,26 @@ class _HomeScreenState extends State<HomeScreen> {
   var drawerKey = GlobalKey<SwipeDrawerState>();
   RestClient _restClient = new RestClient();
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // add this line so you can add your appBar in Body
-      extendBodyBehindAppBar: true,
-      body: SwipeDrawer(
-        radius: 20,
-        key: drawerKey,
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        // add this line so you can add your appBar in Body
+        extendBodyBehindAppBar: true,
+        body: SwipeDrawer(
+          radius: 20,
+          key: drawerKey,
 
-        //hasClone: true,
-        bodyBackgroundPeekSize: 40,
-        bodySize: 100,
-        backgroundColor: Colors.red[600],
-        // pass drawer widget
-        drawer: buildDrawer(),
-        // pass body widget
-        child: buildBody(),
+          //hasClone: true,
+          bodyBackgroundPeekSize: 40,
+          bodySize: 100,
+          backgroundColor: Colors.red[600],
+          // pass drawer widget
+          drawer: buildDrawer(),
+          // pass body widget
+          child: buildBody(),
+        ),
       ),
     );
   }
@@ -54,7 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Center(
                   child: Text(
                     "Medic",
-                    style: TextStyle(color: Colors.white, fontSize: 20.0,fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -101,23 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             print("your menu action here");
                           },
                         ),
-                        Badge(
-                            position: BadgePosition.topEnd(top: 5, end: 10),
-                            badgeContent: Text(
-                              _restClient.itemCount.toString(),
-                              style: TextStyle(color: Colors.white, fontSize: 10),
-                            ),
-                            child:
-                            IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {}))
-                        /*IconButton(
-                          icon: Icon(
-                            Icons.shopping_cart_sharp,
-                            color: Colors.red,
-                          ),
-                          onPressed: () {
-                            print("your menu action here");
-                          },
-                        ),*/
+                        badgeWithCart(),
                       ],
                     ),
                   ),
@@ -126,104 +121,123 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        // build your appBar
-        /*AppBar(
-          title: Text('AppBar title'),
-          backgroundColor: Colors.amber,
-          leading: InkWell(
-              onTap: () {
-                if (drawerKey.currentState.isOpened()) {
-                  drawerKey.currentState.closeDrawer();
-                } else {
-                  drawerKey.currentState.openDrawer();
-                }
-              },
-              child: Icon(Icons.menu)),
-        ),*/
-        // build your screen body
         Expanded(
-          child: CategoriesScreen(),
-          /*child: Container(
-            color: Colors.black12,
-            child: Center(
-              child: Text('Home Screen'),
-            ),
-          ),*/
+          child: _buildBody(context, _restClient.jwtToken),
         ),
       ],
     );
   }
 
-  Widget buildDrawer() {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: EdgeInsets.all(20),
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                  image: NetworkImage(
-                      'https://googleflutter.com/sample_image.jpg'),
-                  fit: BoxFit.fill),
-            ),
+  Future<bool> _onBackPressed() {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Do you really want to exit Medic ?"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("No"),
+            onPressed: () => Navigator.pop(context, false),
           ),
-          _createDrawerItem(
-            icon: Icons.contacts,
-            text: 'Contacts',
+          FlatButton(
+            child: Text("Yes"),
+            onPressed: () => exit(0),
           ),
-          _createDrawerItem(
-            icon: Icons.contacts,
-            text: 'Contacts',
-          ),
-          _createDrawerItem(
-            icon: Icons.contacts,
-            text: 'Contacts',
-          ),
-          _createDrawerItem(
-            icon: Icons.contacts,
-            text: 'Contacts',
-          ),
-          /*ListTile(
-            title: Text('Title'),
-          ),
-          ListTile(
-            title: Text('Title'),
-          ),
-          ListTile(
-            title: Text('Title'),
-          ),*/
         ],
       ),
     );
   }
 
-  Widget _createDrawerItem(
-      {IconData icon, String text, GestureTapCallback onTap}) {
-    return ListTile(
-      title: Row(
-        children: <Widget>[
-          Icon(
-            icon,
-            color: Colors.white,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Text(
-              text,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w500),
+  FutureBuilder<CategoryListResponse> _buildBody(
+      BuildContext context, RestClient) {
+    final client =
+        CategoriesApiClient(Dio(BaseOptions(contentType: "application/json")));
+    return FutureBuilder<CategoryListResponse>(
+      future: client.getCategoryList(RestClient),
+      // ignore: missing_return
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final CategoryListResponse posts = snapshot.data;
+          if (posts.responseCode == '00') {
+            List<CategoryDTO> post = posts.categories;
+            return _buildPosts(context, post);
+          } else {
+            Fluttertoast.showToast(
+                msg: posts.responseMessage,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Theme.of(context).primaryColor,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
+        } else {
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.white,
             ),
-          )
-        ],
-      ),
-      onTap: onTap,
+          );
+        }
+      },
+    );
+  }
+
+  GridView _buildPosts(BuildContext context, List<CategoryDTO> posts) {
+    return GridView.builder(
+      itemCount: posts.length,
+      padding: EdgeInsets.all(4),
+      physics: BouncingScrollPhysics(),
+      // Only for iOS
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, crossAxisSpacing: 4.0, mainAxisSpacing: 4.0),
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          child: Card(
+            elevation: 4,
+            margin: const EdgeInsets.all(10.0),
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Center(
+                    child: Container(
+                      child: new Stack(
+                        children: <Widget>[
+                          new Image.memory(
+                            (posts[index].getImage()),
+                            width: 60.0,
+                            height: 60.0,
+                            color: Theme.of(context).primaryColor,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      posts[index].categoryName,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.0,
+                          color: Colors.black),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          onTap: () {
+            Navigator.push(
+                    context,
+                    PageTransition(
+                        child: MedicineList(categoryId: posts[index].id),
+                        type: PageTransitionType.bottomToTop,
+                        duration: Duration(milliseconds: 500)))
+                .then((_) => setState(() {}));
+          },
+        );
+      },
     );
   }
 }

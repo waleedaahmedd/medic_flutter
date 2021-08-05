@@ -8,8 +8,6 @@ import 'package:medic_flutter_app/Responses/CategoryListResponse.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:medic_flutter_app/Ui/MedicineList.dart';
 
-
-
 import '../Singleton/RestClient.dart';
 
 class CategoriesScreen extends StatefulWidget {
@@ -30,7 +28,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   FutureBuilder<CategoryListResponse> _buildBody(
       BuildContext context, RestClient) {
     final client =
-    CategoriesApiClient(Dio(BaseOptions(contentType: "application/json")));
+        CategoriesApiClient(Dio(BaseOptions(contentType: "application/json")));
     return FutureBuilder<CategoryListResponse>(
       future: client.getCategoryList(RestClient),
       // ignore: missing_return
@@ -109,11 +107,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           ),
           onTap: () {
             Navigator.push(
-                context,
-                PageTransition(
-                    child: MedicineList(categoryId:posts[index].id),
-                    type: PageTransitionType.bottomToTop,
-                    duration: Duration(milliseconds: 500)));
+                    context,
+                    PageTransition(
+                        child: MedicineList(categoryId: posts[index].id),
+                        type: PageTransitionType.bottomToTop,
+                        duration: Duration(milliseconds: 500)))
+                .then((_) => setState(() {}));
           },
         );
       },
