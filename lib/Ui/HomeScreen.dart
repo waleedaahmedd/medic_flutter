@@ -134,11 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => AlertDialog(
         title: Text("Do you really want to exit Medic ?"),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             child: Text("No"),
             onPressed: () => Navigator.pop(context, false),
           ),
-          FlatButton(
+          TextButton(
             child: Text("Yes"),
             onPressed: () => exit(0),
           ),
@@ -229,12 +229,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           onTap: () {
             Navigator.push(
-                    context,
-                    PageTransition(
-                        child: MedicineList(categoryId: posts[index].id),
-                        type: PageTransitionType.bottomToTop,
-                        duration: Duration(milliseconds: 500)))
-                .then((_) => setState(() {}));
+                context,
+                PageTransition(
+                    child: MedicineList(categoryId: posts[index].id),
+                    type: PageTransitionType.rightToLeft,
+                    duration: Duration(
+                        milliseconds:
+                            500)) /*)
+                .then((_) => setState(() {})*/
+                );
           },
         );
       },

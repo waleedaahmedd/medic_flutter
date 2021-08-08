@@ -8,9 +8,13 @@ import 'package:medic_flutter_app/Responses/CartDeleteResponse.dart';
 import 'package:medic_flutter_app/Responses/CartDetailDTO.dart';
 import 'package:medic_flutter_app/Responses/CartDetailResponse.dart';
 import 'package:medic_flutter_app/Singleton/RestClient.dart';
+import 'package:medic_flutter_app/Widgets/buttonWithBorder.dart';
 import 'package:medic_flutter_app/Widgets/buttonWithoutBorder.dart';
 import 'package:medic_flutter_app/Widgets/cartQuantityCounter.dart';
-import 'package:medic_flutter_app/Ui/MedicineList.dart';
+import 'package:medic_flutter_app/Widgets/badgeWithCart.dart';
+import 'package:medic_flutter_app/Widgets/buildCartList.dart';
+
+import 'package:medic_flutter_app/Ui/SubmitForm.dart';
 import 'package:dio/dio.dart';
 import 'package:medic_flutter_app/Widgets/quantityCounter.dart';
 import 'package:medic_flutter_app/Widgets/totalAmount.dart';
@@ -30,6 +34,7 @@ class _CartState extends State<Cart> {
 
   bool deleteButtonPressed = false;
   bool runCartDetails = true;
+
 /*
   final key = GlobalKey<AnimatedListState>();
 */
@@ -58,79 +63,17 @@ class _CartState extends State<Cart> {
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.topRight,
-                child: ElevatedButton(
-                  onPressed: () => setState(() {
-                    deleteButtonPressed = true;
-                    runCartDetails = false;
-                    EasyLoading.show(status: 'Please Wait...');
-                  }),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(50.0),
-                        bottomLeft: Radius.circular(50.0),
-                      ),
-                      //    side: BorderSide(color: Colors.red),
-                    )),
-                    backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).primaryColor),
-
-                    /*  padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(horizontal: 50.0)),*/
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.remove_shopping_cart,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                      Text(
-                        'Delete Cart',
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                    ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                  child: FloatingActionButton.extended(
+                    onPressed: () => showCustomDialog(context, "Delete Cart",
+                        "Do you really want to Delete The Whole Cart ?"),
+                    label: const Text('Delete Cart'),
+                    icon: const Icon(Icons.remove_shopping_cart),
+                    // backgroundColor: Colors.pink,
                   ),
                 ),
-                /*child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    elevation: 10,
-                    color: Colors.red,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.remove_shopping_cart,
-                              color: Colors.white,
-                            ),
-                            onPressed: () =>
-                                _buildBody(context, _restClient.jwtToken),
-                          ),
-                          Text(
-                            'Delete Cart',
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),*/
               ),
             ],
           ),
@@ -167,26 +110,26 @@ class _CartState extends State<Cart> {
             child: Stack(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 60.0),
+                  padding: const EdgeInsets.only(bottom: 30.0),
                   child: runCartDetails
                       ? _buildBody(context, _restClient.jwtToken)
                       : Container(),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                        minWidth: double.infinity, minHeight: 50),
-                    child: ButtonWithoutBorder(
-                      text: 'Add to Cart',
-                      onPressed: () => setState(() {
-                        /*request.medicineId = widget.medicine.medicineId;
-                    request.quantity = _quantity.toString();
-                    pressed = true;*/
-                        /* _buildBody(
-                                      context, _restClient.jwtToken, request);*/
-                      }),
-                    ),
+                Positioned(
+                  right: 10,
+                  bottom: 10,
+                  child: FloatingActionButton.extended(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                              child: OrderSubmit(),
+                              type: PageTransitionType.rightToLeft,
+                              duration: Duration(milliseconds: 500)));
+                    },
+                    label: const Text('CheckOut Now'),
+                    icon: const Icon(Icons.thumb_up),
+                    // backgroundColor: Colors.pink,
                   ),
                 ),
               ],
@@ -221,10 +164,14 @@ class _CartState extends State<Cart> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.shopping_cart,
+                      Icons.remove_shopping_cart_outlined,
                       size: 140,
+                      color: Colors.grey,
                     ),
-                    Text("Cart is Empty"),
+                    Text(
+                      "Cart is Empty",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ],
                 ),
               );
@@ -235,6 +182,7 @@ class _CartState extends State<Cart> {
                       posts.totalPrice.toString());
               return Container(
                 child: _buildPosts(context, post),
+                /**/
               );
             }
           } else {
@@ -258,112 +206,6 @@ class _CartState extends State<Cart> {
     );
   }
 
-  /*AnimatedList _buildPosts(BuildContext context, List<CartDetailDTO> posts) {
-    return AnimatedList(
-      key: key,
-      initialItemCount: posts.length,
-      padding: EdgeInsets.all(4),
-      physics: BouncingScrollPhysics(),
-      itemBuilder: (context, index, animation) {
-
-buildItem(posts[index],index,animation);
-        return GestureDetector(
-          child: Card(
-            elevation: 4,
-            margin: const EdgeInsets.all(10.0),
-            child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  new Align(
-                    alignment: Alignment.centerLeft,
-                    child: new Image.memory(
-                      (posts[index].getImage()),
-                      width: 80.0,
-                      height: 80.0,
-                      // color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              posts[index].medicineName.toUpperCase(),
-                              style: TextStyle(
-                                  // fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
-                                  color: Colors.black),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              posts[index].medicineQuantity.toString() +
-                                  posts[index].medicineUnit +
-                                  " By " +
-                                  posts[index].manufacturer,
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 12.0,
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Visibility(
-                              visible:
-                                  (posts[index].discount.toString() != "0"),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    posts[index].discount.toString() + "% Off ",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Old Price: " +
-                                        posts[index]
-                                            .itemPriceWithoutQuantityAndDiscount
-                                            .toString(),
-                                    style: TextStyle(
-                                      color: Colors.orange,
-                                      decoration: TextDecoration.lineThrough,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: CartQuantityCounter(
-                                _quantity, _itemId, _itemPrice,
-                                callback: (val) => _quantity = val),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          onTap: () {
-            removeItem(posts[index] as int);
-          },
-        );
-      },
-    );
-  }*/
-
   ListView _buildPosts(BuildContext context, List<CartDetailDTO> posts) {
     return ListView.builder(
       itemCount: posts.length,
@@ -373,10 +215,8 @@ buildItem(posts[index],index,animation);
       //gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
       //    crossAxisCount: 1, crossAxisSpacing: 4.0, mainAxisSpacing: 4.0),
       itemBuilder: (context, index) {
-        int _quantity = posts[index].itemQuantity;
-        int _itemId = posts[index].itemId;
-        double _itemPrice = posts[index].itemPriceWithSingleQuantityAndDiscount;
-        return GestureDetector(
+        return new BuildCartList(posts, index, notifyParent: refresh);
+        /*GestureDetector(
           child: Card(
             elevation: 4,
             margin: const EdgeInsets.all(10.0),
@@ -399,6 +239,14 @@ buildItem(posts[index],index,animation);
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: <Widget>[
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon:
+                                  Icon(Icons.delete_forever, color: Colors.red),
+                            ),
+                          ),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
@@ -466,7 +314,7 @@ buildItem(posts[index],index,animation);
             ),
           ),
           onTap: () {},
-        );
+        );*/
       },
     );
   }
@@ -480,10 +328,21 @@ buildItem(posts[index],index,animation);
       // ignore: missing_return
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          EasyLoading.dismiss();
           final CartDeleteResponse posts = snapshot.data;
           SchedulerBinding.instance.addPostFrameCallback((_) async {
             if (posts.responseCode == '00') {
-              EasyLoading.showSuccess("Cart Deleted Successfully");
+              Future.delayed(
+                  Duration.zero, () => badgeWithCart.newCartCount.value = 0);
+              Fluttertoast.showToast(
+                  msg: "Cart Deleted Successfully",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM_LEFT,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.orange,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+
               setState(() {
                 restClient.itemCount = 0;
                 runCartDetails = true;
@@ -496,18 +355,54 @@ buildItem(posts[index],index,animation);
           return Container();
         } else {
           return Container(width: 0, height: 0);
-
-          /*Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.white,
-            ),
-          );*/
         }
       },
     );
   }
 
-  /*void removeItem(int index) {
+  refresh() {
+    setState(() {});
+  }
+
+  showCustomDialog(BuildContext context, String title, String description) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              title,
+              // textAlign: TextAlign.right,
+            ),
+            content: SingleChildScrollView(
+              child: Text(
+                description,
+                style: Theme.of(context).textTheme.bodyText1,
+                // textAlign: TextAlign.right,
+              ),
+            ),
+            actions: [
+              ButtonWithBorder(
+                text: 'Yes',
+                onPressed: () => setState(() {
+                  Navigator.of(context).pop();
+                  deleteButtonPressed = true;
+                  runCartDetails = false;
+                  EasyLoading.show(status: 'Please Wait...');
+                }),
+              ),
+              ButtonWithoutBorder(
+                text: 'No',
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+            actionsPadding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 5,
+            ),
+          );
+        });
+  }
+/*void removeItem(int index) {
     final item = removeItem(index);
     key.currentState.removeItem(index, (context, animation) => buildItem());
   }

@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:medic_flutter_app/Widgets/badgeWithCart.dart';
+
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medic_flutter_app/ApiClients/UserApiClient.dart';
@@ -228,12 +230,15 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
               pref.setString('username', request.userName);
               pref.setString('password', request.password);
               _restClient.jwtToken = posts.jwtToken;
-              _restClient.itemCount = posts.cartItems;
+              Future.delayed(Duration.zero, () {
+                badgeWithCart.newCartCount.value = posts.cartItems;
+              });
+              //  _restClient.itemCount = posts.cartItems;
               Navigator.push(
                   context,
                   PageTransition(
                       child: HomeScreen(),
-                      type: PageTransitionType.bottomToTop,
+                      type: PageTransitionType.rightToLeft,
                       duration: Duration(milliseconds: 500)));
             } else {
               setState(() {

@@ -185,12 +185,15 @@ class _MedicineListState extends State<MedicineList> {
           ),
           onTap: () {
             Navigator.push(
-                    context,
-                    PageTransition(
-                        child: MedicineDetail(medicine: posts[index]),
-                        type: PageTransitionType.bottomToTop,
-                        duration: Duration(milliseconds: 500)))
-                .then((_) => setState(() {}));
+                context,
+                PageTransition(
+                    child: MedicineDetail(medicine: posts[index]),
+                    type: PageTransitionType.rightToLeft,
+                    duration: Duration(
+                        milliseconds:
+                            500)) /*)
+                .then((_) => setState(() {})*/
+                );
           },
         );
       },

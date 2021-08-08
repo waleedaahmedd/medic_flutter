@@ -3,7 +3,7 @@ import 'dart:ffi';
 class CartItemDeleteResponse {
   String responseCode;
   String responseMessage;
-  Double totalPrice;
+  double totalPrice;
 
   CartItemDeleteResponse(
       {this.responseCode, this.responseMessage, this.totalPrice});

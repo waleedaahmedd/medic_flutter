@@ -10,6 +10,7 @@ import 'package:medic_flutter_app/Requests/AddToCartRequest.dart';
 import 'package:medic_flutter_app/Responses/AddToCartResponse.dart';
 import 'package:medic_flutter_app/Responses/MedicineDTO.dart';
 import 'package:medic_flutter_app/Singleton/RestClient.dart';
+import 'package:medic_flutter_app/Widgets/badgeWithCart.dart';
 import 'package:medic_flutter_app/Widgets/buttonWithoutBorder.dart';
 import 'package:medic_flutter_app/Widgets/quantityCounter.dart';
 
@@ -236,8 +237,11 @@ class _MedicineDetailState extends State<MedicineDetail> {
           final AddToCartResponse posts = snapshot.data;
           SchedulerBinding.instance.addPostFrameCallback((_) async {
             if (posts.responseCode == '00') {
-              //int itemCount = restClient.itemCount;
-              restClient.itemCount = ++restClient.itemCount;
+              int itemCount = ++restClient.itemCount;
+              Future.delayed(Duration.zero,
+                  () => badgeWithCart.newCartCount.value = itemCount);
+
+              restClient.itemCount = itemCount;
               EasyLoading.showSuccess("Item Added Successfully");
               setState(() {
                 pressed = false;
