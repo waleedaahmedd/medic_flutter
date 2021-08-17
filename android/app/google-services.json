@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "369477059755",
+    "project_id": "medic-flu",
+    "storage_bucket": "medic-flu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369477059755:android:81fd7daccfd24839f4e3ee",
+        "android_client_info": {
+          "package_name": "com.medic.medic_flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "369477059755-q1cdht7p15urmnikte5ml8ne0kijkt8f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.medic.medic_flutter_app",
+            "certificate_hash": "2ed6a7215e7b72214b6c59c1e1c0f97774f9f895"
+          }
+        },
+        {
+          "client_id": "369477059755-idh1r9g154v0280nbq6vd7dq7tbq6ef4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkII-Svt3AIUHb-vhm7fxVTSGeqYMChPc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "369477059755-idh1r9g154v0280nbq6vd7dq7tbq6ef4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

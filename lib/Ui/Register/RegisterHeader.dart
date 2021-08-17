@@ -7,7 +7,7 @@ import '../../Singleton/RestClient.dart';
 class RegisterHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-  //  RestClient _restClient = new RestClient();
+    //  RestClient _restClient = new RestClient();
 
     // SingletonClass jwtToken = SingletonClass();
     // TODO: implement build

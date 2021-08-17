@@ -34,6 +34,7 @@ class _CartState extends State<Cart> {
 
   bool deleteButtonPressed = false;
   bool runCartDetails = true;
+  int currentCartId;
 
 /*
   final key = GlobalKey<AnimatedListState>();
@@ -63,15 +64,19 @@ class _CartState extends State<Cart> {
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8.0, right: 8.0),
-                  child: FloatingActionButton.extended(
-                    onPressed: () => showCustomDialog(context, "Delete Cart",
-                        "Do you really want to Delete The Whole Cart ?"),
-                    label: const Text('Delete Cart'),
-                    icon: const Icon(Icons.remove_shopping_cart),
-                    // backgroundColor: Colors.pink,
+              Visibility(
+                visible: (_totalitems != 0),
+                child: Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                    child: FloatingActionButton.extended(
+                      heroTag: null,
+                      onPressed: () => showCustomDialog(context, "Delete Cart",
+                          "Do you really want to Delete The Whole Cart ?"),
+                      label: const Text('Delete Cart'),
+                      icon: const Icon(Icons.remove_shopping_cart),
+                      // backgroundColor: Colors.pink,
+                    ),
                   ),
                 ),
               ),
@@ -115,21 +120,25 @@ class _CartState extends State<Cart> {
                       ? _buildBody(context, _restClient.jwtToken)
                       : Container(),
                 ),
-                Positioned(
-                  right: 10,
-                  bottom: 10,
-                  child: FloatingActionButton.extended(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          PageTransition(
-                              child: OrderSubmit(),
-                              type: PageTransitionType.rightToLeft,
-                              duration: Duration(milliseconds: 500)));
-                    },
-                    label: const Text('CheckOut Now'),
-                    icon: const Icon(Icons.thumb_up),
-                    // backgroundColor: Colors.pink,
+                Visibility(
+                  visible: (_totalitems != 0),
+                  child: Positioned(
+                    right: 10,
+                    bottom: 10,
+                    child: FloatingActionButton.extended(
+                      heroTag: null,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                child: OrderSubmit(cartId: currentCartId),
+                                type: PageTransitionType.rightToLeft,
+                                duration: Duration(milliseconds: 500)));
+                      },
+                      label: const Text('CheckOut Now'),
+                      icon: const Icon(Icons.thumb_up),
+                      // backgroundColor: Colors.pink,
+                    ),
                   ),
                 ),
               ],
@@ -154,6 +163,7 @@ class _CartState extends State<Cart> {
         if (snapshot.connectionState == ConnectionState.done) {
           final CartDetailResponse posts = snapshot.data;
           if (posts.responseCode == '00') {
+            currentCartId = posts.cartId;
             List<CartDetailDTO> post = posts.cartItems;
             if (posts.totalPrice.toString() == "null") {
               Future.delayed(
@@ -212,109 +222,9 @@ class _CartState extends State<Cart> {
       padding: EdgeInsets.all(4),
       physics: BouncingScrollPhysics(),
       // Only for iOS
-      //gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //    crossAxisCount: 1, crossAxisSpacing: 4.0, mainAxisSpacing: 4.0),
+
       itemBuilder: (context, index) {
         return new BuildCartList(posts, index, notifyParent: refresh);
-        /*GestureDetector(
-          child: Card(
-            elevation: 4,
-            margin: const EdgeInsets.all(10.0),
-            child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  new Align(
-                    alignment: Alignment.centerLeft,
-                    child: new Image.memory(
-                      (posts[index].getImage()),
-                      width: 80.0,
-                      height: 80.0,
-                      // color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: IconButton(
-                              onPressed: () {},
-                              icon:
-                                  Icon(Icons.delete_forever, color: Colors.red),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              posts[index].medicineName.toUpperCase(),
-                              style: TextStyle(
-                                  // fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
-                                  color: Colors.black),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              posts[index].medicineQuantity.toString() +
-                                  posts[index].medicineUnit +
-                                  " By " +
-                                  posts[index].manufacturer,
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 12.0,
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Visibility(
-                              visible:
-                                  (posts[index].discount.toString() != "0"),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    posts[index].discount.toString() + "% Off ",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Old Price: " +
-                                        posts[index]
-                                            .itemPriceWithoutQuantityAndDiscount
-                                            .toString(),
-                                    style: TextStyle(
-                                      color: Colors.orange,
-                                      decoration: TextDecoration.lineThrough,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: CartQuantityCounter(
-                                _quantity, _itemId, _itemPrice,
-                                callback: (val) => _quantity = val),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          onTap: () {},
-        );*/
       },
     );
   }

@@ -21,7 +21,6 @@ import 'package:medic_flutter_app/Widgets/buttonWithoutBorder.dart';
 import 'package:medic_flutter_app/Widgets/progressDialog.dart';
 
 import 'package:page_transition/page_transition.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../HomeScreen.dart';
@@ -33,8 +32,8 @@ class LoginInputWraper extends StatefulWidget {
 
 class _LoginInputWraperState extends State<LoginInputWraper> {
   Timer _timer;
-  ProgressDialog progressDialog;
-  final TextEditingController phoneController = new TextEditingController();
+  // ProgressDialog progressDialog;
+  //final TextEditingController phoneController = new TextEditingController();
   bool pressed = false;
   bool _obscureText = true;
   final LoginUserRequest request = new LoginUserRequest();
@@ -43,8 +42,16 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
   String _password;
   String _phone;
   String _countryCode;
+  String _loaderWaitingText;
 
   RestClient _restClient = new RestClient();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkAlreadyLogin();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +103,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                             children: <Widget>[
                               TextFormField(
                                 keyboardType: TextInputType.number,
-                                style: TextStyle(fontSize: 18),
+                                //style: TextStyle(fontSize: 18),
                                 decoration: InputDecoration(
                                   labelText: 'Enter your Phone',
                                 ),
@@ -118,7 +125,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         TextFormField(
-                          style: TextStyle(fontSize: 18),
+                          //  style: TextStyle(fontSize: 18),
                           obscureText: _obscureText,
                           decoration: InputDecoration(
                             labelText: 'Enter your Password',
@@ -175,6 +182,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
                           _passwordFormKey.currentState.validate()) {
                         _phoneFormKey.currentState.save();
                         _passwordFormKey.currentState.save();
+                        _loaderWaitingText = 'Please Wait';
                         pressed = true;
                         request.userName = _countryCode + _phone;
                         request.password = _password;
@@ -249,7 +257,7 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
           });
           return Container();
         } else {
-          EasyLoading.show(status: 'Please Wait...');
+          EasyLoading.show(status: _loaderWaitingText);
           return Container();
         }
       },
@@ -276,5 +284,19 @@ class _LoginInputWraperState extends State<LoginInputWraper> {
       return 'Phone Number is not valid';
     }
     return null;
+  }
+
+  Future<void> checkAlreadyLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String getUserName = prefs.getString('username');
+    String getPassword = prefs.getString('password');
+    if (getUserName != null) {
+      setState(() {
+        request.userName = getUserName;
+        request.password = getPassword;
+        _loaderWaitingText = 'You Are Already Login Please Wait';
+        pressed = true;
+      });
+    }
   }
 }

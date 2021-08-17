@@ -5,8 +5,8 @@ class OrderAddressDto {
   String country;
   String nearByLocation;
   String houseNumber;
-  Double lattitude;
-  Double longitude;
+  double lattitude;
+  double longitude;
   String phoneNumber;
   String receiverName;
 

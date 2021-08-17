@@ -37,10 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
           //hasClone: true,
           bodyBackgroundPeekSize: 40,
-          bodySize: 100,
+          bodySize: 200,
           backgroundColor: Colors.red[600],
           // pass drawer widget
-          drawer: buildDrawer(),
+          drawer: buildDrawer(this.context),
           // pass body widget
           child: buildBody(),
         ),

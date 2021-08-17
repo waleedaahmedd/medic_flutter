@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:medic_flutter_app/Ui/HomeScreen.dart';
+import 'package:medic_flutter_app/Ui/Login/LoginPage.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-Widget buildDrawer() {
+Widget buildDrawer(BuildContext context) {
   return Container(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -14,8 +18,8 @@ Widget buildDrawer() {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(
-                image: NetworkImage(
-                    'https://googleflutter.com/sample_image.jpg'),
+                image:
+                    NetworkImage('https://googleflutter.com/sample_image.jpg'),
                 fit: BoxFit.fill),
           ),
         ),
@@ -32,13 +36,25 @@ Widget buildDrawer() {
           text: 'Contacts',
         ),
         _createDrawerItem(
-          icon: Icons.contacts,
-          text: 'Contacts',
-        ),
-
+            icon: Icons.logout,
+            text: 'LogOut',
+            onTap: () {
+              logOut(context);
+            }),
       ],
     ),
   );
+}
+
+logOut(BuildContext context) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  await preferences.clear();
+  Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginPage(),
+      ),
+      ModalRoute.withName("/LoginPage"));
 }
 
 Widget _createDrawerItem(

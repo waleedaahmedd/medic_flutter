@@ -1,4 +1,5 @@
 import 'package:country_code_picker/country_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,26 +9,14 @@ import 'Ui/Login/LoginPage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var username = prefs.getString('username');
-  var password = prefs.getString('password');
 
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   configLoading();
 
-  autoLogin(username, password);
-  //runApp(MaterialApp(home: username == null ? LoginPage() : RegisterPage()));
-}
-
-void autoLogin(String username, password) {
-  // if (username == null) {
+  await Firebase.initializeApp();
 
   runApp(LoginApp());
-
-  // }
-  // runApp(showHomeScreen());
-  // runApi(username, password);
 }
 
 void configLoading() {
@@ -61,25 +50,21 @@ class LoginApp extends StatelessWidget {
         CountryLocalizations.delegate,
       ],
       theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.red,
+        ),
         primaryColor: Colors.red,
+        colorScheme: ColorScheme.fromSwatch()
+            .copyWith(secondary: Colors.red, primary: Colors.red),
+/*
         accentColor: Colors.red,
+*/
         textTheme: TextTheme(
             bodyText2: TextStyle(color: Theme.of(context).primaryColor)),
       ),
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
       builder: EasyLoading.init(),
-    );
-  }
-}
-
-class showHomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
     );
   }
 }

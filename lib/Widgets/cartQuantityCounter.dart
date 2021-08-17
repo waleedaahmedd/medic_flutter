@@ -54,7 +54,7 @@ class _CartQuantityCounterState extends State<CartQuantityCounter> {
                   padding: EdgeInsets.all(3),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Theme.of(context).accentColor),
+                      color: Theme.of(context).primaryColor),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
